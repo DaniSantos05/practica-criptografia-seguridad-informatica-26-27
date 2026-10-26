@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Abrir cuenta{% endblock %}
+{% block contenido %}
+<section class="tarjeta formulario">
+  <h1>Abrir una cuenta</h1>
+  <form method="post">
+    <input type="hidden" name="csrf" value="{{ token_csrf() }}">
+    <label>Usuario <small>(3-20 caracteres: minúsculas, números o _)</small>
+      <input name="usuario" value="{{ usuario or '' }}" required pattern="[a-z0-9_]{3,20}" autocomplete="username">
+    </label>
+    <label>Contraseña <small>(mínimo 12 caracteres; mejor una frase)</small>
+      <input type="password" name="password" required minlength="12" maxlength="128" autocomplete="new-password">
+    </label>
+    <label>Repite la contraseña
+      <input type="password" name="password2" required minlength="12" maxlength="128" autocomplete="new-password">
+    </label>
+    <button class="boton">Crear cuenta</button>
+  </form>
+  <div class="explicacion">
+    <b>¿Qué ocurre al crear la cuenta?</b>
+    <ol>
+      <li>Tu contraseña se guarda solo como resumen <b>Argon2id</b> (sal aleatoria de 128 bits, 64 MiB de memoria).</li>
+      <li>Se genera tu par de claves de firma <b>ECDSA P-256</b>. La clave privada se cifra con <b>AES-256-GCM</b> usando una clave derivada de tu contraseña.</li>
+      <li>La autoridad de certificación del banco te emite un <b>certificado X.509</b> válido durante un año.</li>
+      <li>Se abre tu cuenta con 1.000 € de bienvenida, cifrada y sellada con <b>HMAC-SHA256</b>.</li>
+    </ol>
+  </div>
+</section>
+{% endblock %}

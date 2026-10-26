@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Registro de seguridad{% endblock %}
+{% block contenido %}
+<section class="tarjeta">
+  <h1>Registro de seguridad</h1>
+  <p>Cada operación criptográfica del banco, con el algoritmo y la longitud de clave usados. Nunca se registran
+     claves, contraseñas ni otros secretos. Lo más reciente aparece arriba.</p>
+  <p class="nota">Panel de demostración para la práctica: en un banco real solo lo vería el equipo de seguridad.</p>
+  <pre class="registro grande">{% for linea in lineas %}{{ linea }}
+{% else %}Todavía no hay entradas.{% endfor %}</pre>
+</section>
+{% endblock %}

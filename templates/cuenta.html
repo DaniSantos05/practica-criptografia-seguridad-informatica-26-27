@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titulo %}Mi cuenta{% endblock %}
+{% block contenido %}
+<section class="tarjeta saldo">
+  <div>
+    <p class="etiqueta">Saldo disponible</p>
+    <p class="cifra">{{ cuenta.saldo_centimos | euros }}</p>
+    <p class="iban">IBAN {{ cuenta.iban }}</p>
+  </div>
+  <div class="a-la-derecha">
+    <span class="sello ok">✔ Integridad verificada</span>
+    <p class="nota">AES-256-GCM + HMAC-SHA256 encadenado</p>
+    <a class="boton" href="{{ url_for('transferir') }}">Nueva transferencia</a>
+  </div>
+</section>
+
+<section class="tarjeta">
+  <h2>Movimientos</h2>
+  <table>
+    <thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Contraparte</th><th class="numero">Importe</th><th></th></tr></thead>
+    <tbody>
+    {% for m in cuenta.movimientos %}
+      <tr>
+        <td>{{ m.fecha | fecha }}</td>
+        <td>{{ m.tipo }}</td>
+        <td>{{ m.concepto }}</td>
+        <td class="iban">{{ m.contraparte }}</td>
+        <td class="numero {{ 'positivo' if m.importe_centimos > 0 else 'negativo' }}">{{ m.importe_centimos | euros }}</td>
+        <td>{% if m.id_orden %}<a href="{{ url_for('descargar_justificante', id_orden=m.id_orden) }}">📄 Justificante</a>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

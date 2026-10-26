@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Transferir{% endblock %}
+{% block contenido %}
+<section class="tarjeta formulario">
+  <h1>Nueva transferencia</h1>
+  <form method="post">
+    <input type="hidden" name="csrf" value="{{ token_csrf() }}">
+    <label>Cuenta de destino
+      <input name="iban_destino" list="destinatarios" value="{{ formulario.get('iban_destino', '') }}"
+             placeholder="ES00 0000 0000 0000 0000 0000" required>
+      <datalist id="destinatarios">
+        {% for nombre, iban in destinatarios %}<option value="{{ iban }}">{{ nombre }}</option>{% endfor %}
+      </datalist>
+    </label>
+    <label>Importe (€) <input name="importe" value="{{ formulario.get('importe', '') }}" placeholder="50,00" required></label>
+    <label>Concepto <input name="concepto" value="{{ formulario.get('concepto', '') }}" maxlength="140"></label>
+    <label>Tu contraseña <small>(necesaria para desbloquear tu clave y firmar la orden)</small>
+      <input type="password" name="password" required autocomplete="current-password">
+    </label>
+    <button class="boton">Firmar y enviar</button>
+  </form>
+
+  {% if destinatarios %}
+  <p class="nota">Clientes del banco: {% for nombre, iban in destinatarios %}<b>{{ nombre }}</b> ({{ iban }}){{ ", " if not loop.last }}{% endfor %}</p>
+  {% endif %}
+
+  <div class="explicacion">
+    <b>¿Qué ocurre al pulsar «Firmar y enviar»?</b>
+    <ol>
+      <li>Se crea la orden con un <b>identificador aleatorio único</b> y la fecha actual.</li>
+      <li>Tu contraseña deriva (Argon2id) la clave que descifra tu clave privada, y firmas la orden con <b>ECDSA P-256 + SHA-256</b>.</li>
+      <li>El banco comprueba tu <b>certificado</b> (emitido por su CA, vigente y a tu nombre) y la <b>firma</b>.</li>
+      <li>Comprueba que la orden <b>no ha caducado</b> y que <b>no se ha ejecutado antes</b> (anti-replay).</li>
+      <li>Verifica la integridad de las dos cuentas, apunta los movimientos cifrados y emite un <b>justificante firmado</b>.</li>
+    </ol>
+  </div>
+</section>
+{% endblock %}

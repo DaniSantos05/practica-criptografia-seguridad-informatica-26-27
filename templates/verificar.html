@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titulo %}Verificar justificante{% endblock %}
+{% block contenido %}
+<section class="tarjeta formulario ancho">
+  <h1>Verificar un justificante</h1>
+  <p>Sube el fichero <code>.json</code> de un justificante (o pega su contenido) para comprobar que es auténtico
+     y que nadie lo ha modificado. No hace falta tener cuenta.</p>
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{ token_csrf() }}">
+    <label>Fichero del justificante <input type="file" name="fichero" accept=".json,application/json"></label>
+    <label>…o pega aquí su contenido <textarea name="texto" rows="8">{{ texto }}</textarea></label>
+    <button class="boton">Verificar</button>
+  </form>
+</section>
+
+{% if resultado %}
+<section class="tarjeta">
+  {% if resultado.valido %}
+    <h2><span class="sello ok">✔ Justificante AUTÉNTICO</span></h2>
+  {% else %}
+    <h2><span class="sello mal">✘ Justificante NO VÁLIDO</span></h2>
+  {% endif %}
+  <ul class="comprobaciones">
+    {% for texto, correcta, detalle in resultado.comprobaciones %}
+      <li class="{{ 'ok' if correcta else 'mal' }}">{{ '✔' if correcta else '✘' }} {{ texto }}{% if not correcta %}: <i>{{ detalle }}</i>{% endif %}</li>
+    {% endfor %}
+  </ul>
+  {% if resultado.orden %}
+  <p class="nota">Contenido declarado: {{ resultado.orden.ordenante }} → {{ resultado.orden.iban_destino }},
+     importe {{ resultado.orden.importe_centimos | euros if resultado.orden.importe_centimos is number else '?' }},
+     concepto «{{ resultado.orden.concepto }}».</p>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

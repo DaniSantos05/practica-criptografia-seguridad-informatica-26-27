@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}BancoSeguro{% endblock %} · BancoSeguro</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+  <header class="cabecera">
+    <a class="logo" href="{{ url_for('inicio') }}">🏦 BancoSeguro</a>
+    <nav>
+      {% if session.usuario %}
+        <a href="{{ url_for('cuenta') }}">Mi cuenta</a>
+        <a href="{{ url_for('transferir') }}">Transferir</a>
+      {% endif %}
+      <a href="{{ url_for('verificar') }}">Verificar justificante</a>
+      <a href="{{ url_for('laboratorio') }}">Laboratorio de ataques</a>
+      <a href="{{ url_for('registro_seguridad') }}">Registro de seguridad</a>
+      {% if session.usuario %}
+        <form method="post" action="{{ url_for('logout') }}" class="en-linea">
+          <input type="hidden" name="csrf" value="{{ token_csrf() }}">
+          <button class="boton-enlace">Salir ({{ session.usuario }})</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('login') }}">Entrar</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main>
+    {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+      <div class="aviso aviso-{{ categoria }}">{{ mensaje }}</div>
+    {% endfor %}
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer>Práctica de Criptografía y Seguridad Informática · UC3M 26/27 · Banco ficticio con fines académicos</footer>
+</body>
+</html>

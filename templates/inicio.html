@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+<section class="tarjeta portada">
+  <h1>Tu banca online, protegida con criptografía</h1>
+  <p>BancoSeguro es una banca online de prueba. Cada operación usa criptografía actual y la puedes seguir
+     en el <a href="{{ url_for('registro_seguridad') }}">registro de seguridad</a>.</p>
+  <div class="botones">
+    <a class="boton" href="{{ url_for('registro') }}">Abrir una cuenta</a>
+    <a class="boton secundario" href="{{ url_for('login') }}">Ya soy cliente</a>
+  </div>
+</section>
+
+<section class="rejilla">
+  <div class="tarjeta"><h3>🔑 Contraseñas</h3><p>Se guardan solo como resumen <b>Argon2id</b> con sal. Bloqueo tras 5 intentos fallidos.</p></div>
+  <div class="tarjeta"><h3>🔒 Datos cifrados</h3><p>Saldos y movimientos cifrados con <b>AES-256-GCM</b>: no se pueden leer ni modificar sin que se detecte.</p></div>
+  <div class="tarjeta"><h3>🧾 Movimientos sellados</h3><p>Cada movimiento lleva un <b>HMAC-SHA256</b> encadenado: borrar o mover uno rompe la cadena.</p></div>
+  <div class="tarjeta"><h3>✍️ Firma digital</h3><p>Cada transferencia la firmas tú con <b>ECDSA P-256</b>. El banco firma el justificante.</p></div>
+  <div class="tarjeta"><h3>📜 Certificados</h3><p>La autoridad de certificación del banco emite un certificado <b>X.509</b> con tu clave pública.</p></div>
+  <div class="tarjeta"><h3>🔁 Anti-replay</h3><p>Cada orden tiene un identificador único y caduca a los 5 minutos: no se puede ejecutar dos veces.</p></div>
+</section>
+{% endblock %}

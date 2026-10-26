@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Datos manipulados{% endblock %}
+{% block contenido %}
+<section class="tarjeta alerta">
+  <h1>⚠️ Se han detectado datos manipulados</h1>
+  <p><b>{{ motivo }}</b></p>
+  <p>Las comprobaciones de integridad (tag de AES-GCM o HMAC-SHA256) no coinciden, así que el banco no muestra
+     ni utiliza estos datos. El incidente ha quedado anotado en el
+     <a href="{{ url_for('registro_seguridad') }}">registro de seguridad</a>.</p>
+</section>
+{% endblock %}

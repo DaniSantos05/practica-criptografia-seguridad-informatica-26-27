@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}Laboratorio de ataques{% endblock %}
+{% block contenido %}
+<section class="tarjeta">
+  <h1>Laboratorio de ataques</h1>
+  <p>Esta página lanza ataques <b>reales</b> contra un banco temporal con dos clientas: <b>Ana</b> (la víctima)
+     y <b>Eva</b> (la atacante). Los datos reales del banco no se tocan. Cada ataque debe ser <b>rechazado</b>.</p>
+  <form method="post">
+    <input type="hidden" name="csrf" value="{{ token_csrf() }}">
+    <button class="boton">Lanzar todos los ataques</button> <span class="nota">(tarda unos segundos)</span>
+  </form>
+</section>
+
+{% if resultados %}
+  {% set rechazados = resultados | selectattr('rechazado') | list | length %}
+  <section class="tarjeta">
+    <h2><span class="sello {{ 'ok' if rechazados == resultados|length else 'mal' }}">
+      {{ rechazados }} de {{ resultados|length }} ataques rechazados</span></h2>
+  </section>
+  {% for r in resultados %}
+  <section class="tarjeta ataque">
+    <div class="cabecera-ataque">
+      <h3>{{ loop.index }}. {{ r.titulo }}</h3>
+      <span class="sello {{ 'ok' if r.rechazado else 'mal' }}">{{ '✔ RECHAZADO' if r.rechazado else '✘ HA FUNCIONADO' }}</span>
+    </div>
+    <p>{{ r.descripcion }}</p>
+    <p><span class="defensa">Defensa: {{ r.defensa }}</span> <b>Respuesta del banco:</b> {{ r.mensaje }}</p>
+    <pre class="registro">{% for linea in r.registro %}{{ linea }}
+{% endfor %}</pre>
+  </section>
+  {% endfor %}
+{% endif %}
+{% endblock %}

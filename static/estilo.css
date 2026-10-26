@@ -1,0 +1,121 @@
+/* Estilo sencillo de BancoSeguro */
+
+:root {
+  --azul: #12355b;
+  --azul-claro: #1f6fb2;
+  --fondo: #f2f5f9;
+  --blanco: #ffffff;
+  --texto: #1d2733;
+  --gris: #5f6b7a;
+  --borde: #d9e0e8;
+  --verde: #1d7a46;
+  --verde-fondo: #e3f4ea;
+  --rojo: #b3261e;
+  --rojo-fondo: #fbe6e4;
+  --amarillo-fondo: #fff4d6;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.5;
+}
+
+a { color: var(--azul-claro); }
+
+/* Cabecera */
+.cabecera {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+  padding: 14px 28px; background: var(--azul); color: var(--blanco);
+}
+.cabecera a, .boton-enlace { color: var(--blanco); text-decoration: none; margin-left: 18px; font-size: 15px; }
+.cabecera a:hover, .boton-enlace:hover { text-decoration: underline; }
+.logo { font-weight: 700; font-size: 20px !important; margin-left: 0 !important; }
+.en-linea { display: inline; }
+.boton-enlace { background: none; border: none; cursor: pointer; font: inherit; padding: 0; }
+
+main { max-width: 1050px; margin: 28px auto; padding: 0 16px; }
+footer { text-align: center; color: var(--gris); font-size: 13px; padding: 24px; }
+
+/* Tarjetas */
+.tarjeta {
+  background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px;
+  padding: 22px 26px; margin-bottom: 18px; box-shadow: 0 1px 3px rgba(0, 0, 0, .04);
+}
+.tarjeta h1 { margin-top: 0; color: var(--azul); font-size: 26px; }
+.tarjeta h2 { margin-top: 0; color: var(--azul); font-size: 20px; }
+.tarjeta h3 { margin: 0 0 6px; color: var(--azul); }
+.rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.rejilla .tarjeta { margin-bottom: 0; }
+.portada { text-align: center; padding: 40px 26px; }
+.alerta { border-color: var(--rojo); background: var(--rojo-fondo); }
+
+/* Formularios */
+.formulario { max-width: 620px; margin-left: auto; margin-right: auto; }
+.formulario.ancho { max-width: none; }
+label { display: block; margin-bottom: 14px; font-weight: 600; }
+label small { font-weight: 400; color: var(--gris); }
+input, textarea {
+  display: block; width: 100%; margin-top: 5px; padding: 10px 12px;
+  border: 1px solid var(--borde); border-radius: 8px; font: inherit; background: var(--blanco);
+}
+textarea { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+input:focus, textarea:focus { outline: 2px solid var(--azul-claro); border-color: transparent; }
+
+.boton {
+  display: inline-block; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;
+  background: var(--azul-claro); color: var(--blanco); font: inherit; font-weight: 600; text-decoration: none;
+}
+.boton:hover { background: var(--azul); }
+.boton.secundario { background: var(--blanco); color: var(--azul); border: 1px solid var(--azul); }
+.botones { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+
+.explicacion { margin-top: 22px; padding: 14px 18px; background: var(--fondo); border-radius: 8px; font-size: 14px; }
+.explicacion ol { margin: 8px 0 0; padding-left: 20px; }
+.nota { color: var(--gris); font-size: 14px; }
+
+/* Avisos */
+.aviso { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 500; }
+.aviso-ok { background: var(--verde-fondo); color: var(--verde); }
+.aviso-error { background: var(--rojo-fondo); color: var(--rojo); }
+.aviso-aviso { background: var(--amarillo-fondo); }
+
+/* Cuenta */
+.saldo { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+.etiqueta { margin: 0; color: var(--gris); }
+.cifra { margin: 4px 0; font-size: 38px; font-weight: 700; color: var(--azul); }
+.iban { font-family: ui-monospace, Consolas, monospace; font-size: 13px; color: var(--gris); }
+.a-la-derecha { text-align: right; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 9px 8px; border-bottom: 1px solid var(--borde); text-align: left; }
+th { color: var(--gris); font-weight: 600; }
+.numero { text-align: right; white-space: nowrap; }
+.positivo { color: var(--verde); font-weight: 600; }
+.negativo { color: var(--rojo); font-weight: 600; }
+
+/* Sellos de estado */
+.sello { display: inline-block; padding: 4px 12px; border-radius: 999px; font-weight: 700; font-size: 14px; }
+.sello.ok { background: var(--verde-fondo); color: var(--verde); }
+.sello.mal { background: var(--rojo-fondo); color: var(--rojo); }
+
+.comprobaciones { list-style: none; padding: 0; }
+.comprobaciones li { padding: 6px 0; }
+.comprobaciones .ok { color: var(--verde); }
+.comprobaciones .mal { color: var(--rojo); }
+
+/* Laboratorio y registro */
+.cabecera-ataque { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.defensa {
+  display: inline-block; margin-right: 8px; padding: 2px 10px; border-radius: 6px;
+  background: var(--fondo); color: var(--azul); font-size: 13px; font-weight: 600;
+}
+.registro {
+  background: #0f1b2a; color: #cfe3f7; padding: 12px 14px; border-radius: 8px;
+  font-size: 12.5px; overflow-x: auto; white-space: pre-wrap; margin-bottom: 0;
+}
+.registro.grande { max-height: 70vh; overflow-y: auto; }

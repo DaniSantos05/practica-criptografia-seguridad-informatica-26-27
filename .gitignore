@@ -1,0 +1,15 @@
+# Datos generados al ejecutar (claves cifradas, cuentas...): nunca al repositorio
+datos/
+*.tmp
+*.copia
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Sistema
+.DS_Store
+.vscode/
+.idea/
