@@ -16,7 +16,11 @@ def banco(tmp_path):
 
 @pytest.fixture
 def banco_con_clientes(banco):
-    """Banco con dos clientes: ana y luis."""
+    """Banco con dos clientes: ana y luis (1.000 € cada uno)."""
     banco.registrar("ana", PASSWORD_ANA)
     banco.registrar("luis", PASSWORD_LUIS)
     return banco
+
+
+def iban_de(banco, usuario):
+    return banco.consultar_cuenta(usuario)["iban"]

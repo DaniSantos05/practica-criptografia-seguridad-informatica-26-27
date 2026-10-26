@@ -5,6 +5,8 @@
   <h1>Laboratorio de ataques</h1>
   <p>Esta página lanza ataques <b>reales</b> contra un banco temporal con dos clientas: <b>Ana</b> (la víctima)
      y <b>Eva</b> (la atacante). Los datos reales del banco no se tocan. Cada ataque debe ser <b>rechazado</b>.</p>
+  <p>Los ataques están agrupados según los puntos del enunciado de la práctica: son las <b>pruebas negativas</b> que pide
+     (ciphertext/tag/MAC modificado, firma alterada, clave o contraseña incorrecta y repetición de mensajes).</p>
   <form method="post">
     <input type="hidden" name="csrf" value="{{ token_csrf() }}">
     <button class="boton">Lanzar todos los ataques</button> <span class="nota">(tarda unos segundos)</span>
@@ -17,10 +19,12 @@
     <h2><span class="sello {{ 'ok' if rechazados == resultados|length else 'mal' }}">
       {{ rechazados }} de {{ resultados|length }} ataques rechazados</span></h2>
   </section>
-  {% for r in resultados %}
+  {% for punto, grupo in resultados | groupby('punto') %}
+  <h2 class="titulo-punto">{{ grupo[0].nombre_punto }}</h2>
+  {% for r in grupo %}
   <section class="tarjeta ataque">
     <div class="cabecera-ataque">
-      <h3>{{ loop.index }}. {{ r.titulo }}</h3>
+      <h3>{{ r.titulo }}</h3>
       <span class="sello {{ 'ok' if r.rechazado else 'mal' }}">{{ '✔ RECHAZADO' if r.rechazado else '✘ HA FUNCIONADO' }}</span>
     </div>
     <p>{{ r.descripcion }}</p>
@@ -28,6 +32,7 @@
     <pre class="registro">{% for linea in r.registro %}{{ linea }}
 {% endfor %}</pre>
   </section>
+  {% endfor %}
   {% endfor %}
 {% endif %}
 {% endblock %}

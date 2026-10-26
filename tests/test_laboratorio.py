@@ -1,6 +1,6 @@
 """
-Ejecuta cada ataque del laboratorio y comprueba que el banco lo rechaza con el
-motivo esperado. Son las pruebas negativas que pide el enunciado.
+PRUEBAS NEGATIVAS · Ejecuta cada ataque del laboratorio y comprueba que el banco
+lo rechaza con el motivo esperado.
 """
 
 import shutil
@@ -25,11 +25,13 @@ MOTIVO_ESPERADO = {
     "ataque_mover_movimiento": "HMAC no coincide",
     "ataque_modificar_justificante": "justificante alterado",
     "ataque_fuerza_bruta_login": "bloqueada",
+    "ataque_password_de_diccionario": "demasiado común",
+    "ataque_frase_maestra_incorrecta": "frase maestra no es correcta",
 }
 
 
-@pytest.mark.parametrize("titulo, defensa, ataque", ATAQUES, ids=[a[2].__name__ for a in ATAQUES])
-def test_el_ataque_se_rechaza(titulo, defensa, ataque):
+@pytest.mark.parametrize("punto, titulo, defensa, ataque", ATAQUES, ids=[a[3].__name__ for a in ATAQUES])
+def test_el_ataque_se_rechaza(punto, titulo, defensa, ataque):
     carpeta = tempfile.mkdtemp()
     try:
         with pytest.raises(ErrorBanco, match=MOTIVO_ESPERADO[ataque.__name__]):
@@ -39,4 +41,4 @@ def test_el_ataque_se_rechaza(titulo, defensa, ataque):
 
 
 def test_hay_un_motivo_esperado_para_cada_ataque():
-    assert {a[2].__name__ for a in ATAQUES} == set(MOTIVO_ESPERADO)
+    assert {a[3].__name__ for a in ATAQUES} == set(MOTIVO_ESPERADO)

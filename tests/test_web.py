@@ -1,4 +1,4 @@
-"""Pruebas de la interfaz web (con el cliente de pruebas de Flask)."""
+"""CALIDAD DEL SOFTWARE · Pruebas de la interfaz web (sesión, CSRF, validación de entradas)."""
 
 import re
 

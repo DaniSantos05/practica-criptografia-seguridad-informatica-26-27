@@ -16,8 +16,10 @@ import tempfile
 from contextlib import contextmanager
 from datetime import timedelta
 
-from banco import cripto
 from banco.banco import Banco, ErrorBanco, ahora
+from banco.cripto import comun
+from banco.cripto import punto4_firma as firmas
+from banco.cripto import punto5_certificados as certificados
 
 PASSWORD_ANA = "Mi perro se llama Toby 2026"
 PASSWORD_EVA = "Soy la atacante malvada 666"
@@ -109,13 +111,13 @@ def ataque_certificado_falso(e):
     a nombre de "ana". La firma es correcta, pero el certificado no lo ha
     emitido la CA del banco.
     """
-    clave_ca_falsa = cripto.generar_par_claves()
-    ca_falsa = cripto.crear_certificado_ca(clave_ca_falsa, "BancoSeguro - Autoridad de Certificacion")
-    clave_eva = cripto.generar_par_claves()
-    certificado_falso = cripto.emitir_certificado(clave_ca_falsa, ca_falsa, clave_eva.public_key(), "ana")
+    clave_ca_falsa = firmas.generar_par_claves()
+    ca_falsa = certificados.crear_certificado_ca(clave_ca_falsa, "BancoSeguro - Autoridad de Certificacion")
+    clave_eva = firmas.generar_par_claves()
+    certificado_falso = certificados.emitir_certificado(clave_ca_falsa, ca_falsa, clave_eva.public_key(), "ana")
     orden = e.banco.preparar_orden("ana", e.iban_eva, 90_000, "Te robo")
-    firma = cripto.firmar(clave_eva, cripto.json_canonico(orden))
-    e.banco.ejecutar_orden(orden, firma, cripto.certificado_a_pem(certificado_falso))
+    firma = firmas.firmar(clave_eva, comun.json_canonico(orden))
+    e.banco.ejecutar_orden(orden, firma, certificados.certificado_a_pem(certificado_falso))
 
 
 def ataque_password_de_firma_incorrecta(e):
@@ -183,21 +185,51 @@ def ataque_fuerza_bruta_login(e):
     e.banco.iniciar_sesion("ana", PASSWORD_ANA)
 
 
+def ataque_password_de_diccionario(e):
+    """Un cliente intenta registrarse con una contraseña que aparece en los diccionarios de ataque."""
+    e.banco.registrar("mario", "password1234")
+
+
+def ataque_frase_maestra_incorrecta(e):
+    """Alguien copia la carpeta de datos e intenta arrancar el banco sin conocer la frase maestra."""
+    Banco(e.carpeta, "creo que la frase era esta", mostrar_registro=False)
+
+
+# Cada ataque: (punto del enunciado, título, defensa que lo detiene, función)
 ATAQUES = [
-    ("Modificar el importe de una orden firmada", "Integridad · firma digital", ataque_modificar_importe),
-    ("Alterar un byte de la firma", "Firma digital", ataque_firma_alterada),
-    ("Repetir una orden ya ejecutada (replay)", "Anti-replay", ataque_replay),
-    ("Presentar una orden firmada hace una hora", "Anti-replay · caducidad", ataque_orden_caducada),
-    ("Firmar en nombre de Ana con el certificado de Eva", "PKI · identidad", ataque_suplantacion_con_certificado_propio),
-    ("Certificado de 'ana' emitido por una CA falsa", "PKI · cadena de confianza", ataque_certificado_falso),
-    ("Firmar sin conocer la contraseña de Ana", "Protección de la clave privada", ataque_password_de_firma_incorrecta),
-    ("Cambiar un byte del saldo cifrado en el disco", "Cifrado autenticado (AES-GCM)", ataque_modificar_saldo_cifrado),
-    ("Copiar el saldo cifrado de otra cuenta", "AES-GCM · datos asociados (AAD)", ataque_copiar_saldo_de_otra_cuenta),
-    ("Borrar un movimiento para ocultar un cargo", "HMAC encadenado", ataque_borrar_movimiento),
-    ("Copiar un movimiento de otra cuenta", "HMAC encadenado", ataque_mover_movimiento),
-    ("Modificar el importe de un justificante", "Firma del banco", ataque_modificar_justificante),
-    ("Fuerza bruta contra la contraseña", "Autenticación · bloqueo", ataque_fuerza_bruta_login),
+    ("P1", "Fuerza bruta contra la contraseña", "Argon2id + bloqueo tras 5 fallos", ataque_fuerza_bruta_login),
+    ("P1", "Registrarse con una contraseña de diccionario", "Política de contraseñas robustas",
+     ataque_password_de_diccionario),
+    ("P2", "Cambiar un byte del saldo cifrado en el disco", "Tag de AES-256-GCM", ataque_modificar_saldo_cifrado),
+    ("P2", "Copiar el saldo cifrado de otra cuenta", "AES-GCM con datos asociados (AAD = IBAN)",
+     ataque_copiar_saldo_de_otra_cuenta),
+    ("P3", "Borrar un movimiento para ocultar un cargo", "HMAC-SHA256 encadenado", ataque_borrar_movimiento),
+    ("P3", "Copiar un movimiento de otra cuenta", "HMAC-SHA256 (incluye el IBAN)", ataque_mover_movimiento),
+    ("P4", "Modificar el importe de una orden firmada", "Firma ECDSA del cliente", ataque_modificar_importe),
+    ("P4", "Alterar un byte de la firma", "Verificación ECDSA", ataque_firma_alterada),
+    ("P4", "Modificar el importe de un justificante", "Firma ECDSA del banco", ataque_modificar_justificante),
+    ("P5", "Firmar en nombre de Ana con el certificado de Eva", "Certificado X.509: identidad",
+     ataque_suplantacion_con_certificado_propio),
+    ("P5", "Certificado de 'ana' emitido por una CA falsa", "Certificado X.509: firma de la CA del banco",
+     ataque_certificado_falso),
+    ("P5", "Firmar sin conocer la contraseña de Ana", "Clave privada cifrada con clave derivada de la contraseña",
+     ataque_password_de_firma_incorrecta),
+    ("P5", "Arrancar el banco sin la frase maestra", "Clave maestra derivada de la frase (no se guarda)",
+     ataque_frase_maestra_incorrecta),
+    ("Repetición", "Repetir una orden ya ejecutada (replay)", "Identificador único dentro de lo firmado",
+     ataque_replay),
+    ("Repetición", "Presentar una orden firmada hace una hora", "Fecha firmada y caducidad de 5 minutos",
+     ataque_orden_caducada),
 ]
+
+PUNTOS = {
+    "P1": "Punto 1 · Registro y autenticación de usuarios",
+    "P2": "Punto 2 · Cifrado autenticado",
+    "P3": "Punto 3 · Etiquetas de autenticación de mensajes (MAC)",
+    "P4": "Punto 4 · Firma digital",
+    "P5": "Punto 5 · Generación y almacenamiento de claves (y certificados)",
+    "Repetición": "Otras consideraciones · Repetición de mensajes (replay)",
+}
 
 
 def ejecutar_laboratorio():
@@ -206,7 +238,7 @@ def ejecutar_laboratorio():
     una lista de resultados para mostrar en la web.
     """
     resultados = []
-    for titulo, defensa, ataque in ATAQUES:
+    for punto, titulo, defensa, ataque in ATAQUES:
         carpeta = tempfile.mkdtemp(prefix="laboratorio_")
         try:
             escenario = Escenario(carpeta)
@@ -216,6 +248,8 @@ def ejecutar_laboratorio():
             except ErrorBanco as error:
                 rechazado, mensaje = True, str(error)
             resultados.append({
+                "punto": punto,
+                "nombre_punto": PUNTOS[punto],
                 "titulo": titulo,
                 "descripcion": " ".join(ataque.__doc__.split()),
                 "defensa": defensa,

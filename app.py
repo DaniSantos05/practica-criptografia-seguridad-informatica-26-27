@@ -2,7 +2,7 @@
 Interfaz web de BancoSeguro (Flask).
 
 Este fichero solo se ocupa de las páginas y los formularios: toda la lógica está
-en banco/banco.py y toda la criptografía en banco/cripto.py.
+en banco/banco.py y toda la criptografía en banco/cripto/ (un archivo por punto del enunciado).
 
 Ejecución:  python app.py   y abrir  http://127.0.0.1:5000
 """
@@ -18,7 +18,7 @@ from functools import wraps
 
 from flask import Flask, abort, flash, redirect, render_template, request, Response, session, url_for
 
-from banco import cripto
+from banco.cripto import comun
 from banco.banco import Banco, ErrorBanco, ErrorIntegridad, FraseMaestraIncorrecta, euros
 from banco.laboratorio import ejecutar_laboratorio
 
@@ -71,7 +71,7 @@ def crear_app(banco):
     def comprobar_csrf():
         if request.method == "POST":
             enviado = request.form.get("csrf", "")
-            if not enviado or not cripto.iguales(enviado, session.get("csrf", "")):
+            if not enviado or not comun.iguales(enviado, session.get("csrf", "")):
                 abort(400, "Token CSRF no válido")
 
     # ------------------------------------------------------- sesión y acceso

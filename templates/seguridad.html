@@ -6,6 +6,11 @@
   <p>Cada operación criptográfica del banco, con el algoritmo y la longitud de clave usados. Nunca se registran
      claves, contraseñas ni otros secretos. Lo más reciente aparece arriba.</p>
   <p class="nota">Panel de demostración para la práctica: en un banco real solo lo vería el equipo de seguridad.</p>
+  <p class="leyenda">
+    <span><b>P1</b> Autenticación</span><span><b>P2</b> Cifrado</span><span><b>P3</b> MAC</span>
+    <span><b>P4</b> Firma digital</span><span><b>P5</b> Claves y certificados</span>
+    <span><b>ORDEN</b> Transferencia ejecutada</span><span><b>RECHAZO</b> Orden rechazada</span>
+  </p>
   <pre class="registro grande">{% for linea in lineas %}{{ linea }}
 {% else %}Todavía no hay entradas.{% endfor %}</pre>
 </section>

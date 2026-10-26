@@ -119,3 +119,8 @@ th { color: var(--gris); font-weight: 600; }
   font-size: 12.5px; overflow-x: auto; white-space: pre-wrap; margin-bottom: 0;
 }
 .registro.grande { max-height: 70vh; overflow-y: auto; }
+
+/* Títulos de cada punto del enunciado */
+.titulo-punto { color: var(--azul); font-size: 19px; margin: 26px 0 12px; }
+.leyenda { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; }
+.leyenda span { background: var(--fondo); border-radius: 6px; padding: 3px 10px; }

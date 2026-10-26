@@ -11,12 +11,13 @@
   </div>
 </section>
 
+<h2 class="titulo-punto">Cómo cumple cada punto del enunciado</h2>
 <section class="rejilla">
-  <div class="tarjeta"><h3>🔑 Contraseñas</h3><p>Se guardan solo como resumen <b>Argon2id</b> con sal. Bloqueo tras 5 intentos fallidos.</p></div>
-  <div class="tarjeta"><h3>🔒 Datos cifrados</h3><p>Saldos y movimientos cifrados con <b>AES-256-GCM</b>: no se pueden leer ni modificar sin que se detecte.</p></div>
-  <div class="tarjeta"><h3>🧾 Movimientos sellados</h3><p>Cada movimiento lleva un <b>HMAC-SHA256</b> encadenado: borrar o mover uno rompe la cadena.</p></div>
-  <div class="tarjeta"><h3>✍️ Firma digital</h3><p>Cada transferencia la firmas tú con <b>ECDSA P-256</b>. El banco firma el justificante.</p></div>
-  <div class="tarjeta"><h3>📜 Certificados</h3><p>La autoridad de certificación del banco emite un certificado <b>X.509</b> con tu clave pública.</p></div>
-  <div class="tarjeta"><h3>🔁 Anti-replay</h3><p>Cada orden tiene un identificador único y caduca a los 5 minutos: no se puede ejecutar dos veces.</p></div>
+  <div class="tarjeta"><h3>1 · Autenticación</h3><p>Las contraseñas se guardan solo como resumen <b>Argon2id</b> con sal de 128 bits. Política de contraseñas robustas y bloqueo tras 5 fallos.</p></div>
+  <div class="tarjeta"><h3>2 · Cifrado autenticado</h3><p>Saldos, movimientos y justificantes cifrados con <b>AES-256-GCM</b> (nonce nuevo de 96 bits y datos asociados).</p></div>
+  <div class="tarjeta"><h3>3 · Autenticación de mensajes</h3><p>Cada movimiento lleva un <b>HMAC-SHA256</b> encadenado al anterior: modificarlo, moverlo o borrarlo se detecta.</p></div>
+  <div class="tarjeta"><h3>4 · Firma digital</h3><p>Cada transferencia la firma el cliente con <b>ECDSA P-256 + SHA-256</b>. El banco firma el justificante.</p></div>
+  <div class="tarjeta"><h3>5 · Claves y certificados</h3><p>Claves derivadas con <b>Argon2id</b> y <b>HKDF</b>, claves privadas cifradas y certificados <b>X.509</b> emitidos por la CA del banco.</p></div>
+  <div class="tarjeta"><h3>Repetición de mensajes</h3><p>Cada orden tiene un identificador único y caduca a los 5 minutos: no se puede ejecutar dos veces.</p></div>
 </section>
 {% endblock %}
